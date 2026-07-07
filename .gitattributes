@@ -1,0 +1,14 @@
+# Keep dev-only files out of the distributed Composer package (`export-ignore`).
+# NOTE: resources/dist/ is intentionally shipped — the built assets are committed.
+/.github            export-ignore
+/.gitattributes     export-ignore
+/.gitignore         export-ignore
+/.editorconfig      export-ignore
+/pint.json          export-ignore
+/build.mjs          export-ignore
+/sync.mjs           export-ignore
+/package.json       export-ignore
+/package-lock.json  export-ignore
+/resources/js       export-ignore
+/resources/picker   export-ignore
+/tests              export-ignore

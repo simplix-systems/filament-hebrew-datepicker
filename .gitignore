@@ -1,0 +1,8 @@
+/vendor
+/node_modules
+composer.lock
+package-lock.json
+
+# NOTE: resources/dist/ is intentionally NOT ignored — the built assets
+# (hebrew-date-picker.js/css) are committed so the published Composer package
+# is self-contained and consumers don't need Node/npm to build anything.

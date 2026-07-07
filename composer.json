@@ -1,0 +1,44 @@
+{
+    "name": "simplix-systems/filament-hebrew-datepicker",
+    "description": "A beautiful Hebrew & Gregorian date picker field for Filament — holidays, Parashat HaShavua, range, time — styled to match Filament.",
+    "keywords": ["simplix-systems", "filament", "filament-plugin", "laravel", "hebrew", "datepicker", "jewish-calendar", "luach"],
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/simplix-systems/filament-hebrew-datepicker",
+    "support": {
+        "issues": "https://github.com/simplix-systems/filament-hebrew-datepicker/issues",
+        "source": "https://github.com/simplix-systems/filament-hebrew-datepicker"
+    },
+    "authors": [
+        {
+            "name": "Simplix Systems",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "filament/forms": "^4.0|^5.0",
+        "filament/support": "^4.0|^5.0",
+        "spatie/laravel-package-tools": "^1.15"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0"
+    },
+    "autoload": {
+        "psr-4": { "SimplixSystems\\HebrewDatePicker\\": "src/" }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["SimplixSystems\\HebrewDatePicker\\HebrewDatePickerServiceProvider"]
+        }
+    },
+    "scripts": {
+        "lint": "pint",
+        "test:lint": "pint --test"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

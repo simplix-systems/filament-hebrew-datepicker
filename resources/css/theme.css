@@ -1,0 +1,77 @@
+/* Filament theme for hebrew-datepicker.
+ * Maps the picker's --hdp-* variables onto Filament's design tokens so the
+ * calendar looks native to a Filament panel (rounded-lg, gray scale, the
+ * panel's primary color, focus rings, light/dark).
+ *
+ * IMPORTANT — Filament v3 exposed colors as space-separated RGB triplets
+ * (e.g. --primary-600: 217 119 6), but Filament v4/v5 expose them as *full
+ * OKLCH colors* (e.g. --primary-600: oklch(0.511 0.262 276.966)). So we must
+ * NOT wrap a token in rgb(): `rgb(var(--primary-600))` becomes
+ * `rgb(oklch(...))`, which is invalid CSS and the browser silently drops the
+ * whole declaration — leaving every --hdp-* color empty (black-on-white).
+ * Use the token directly as a full color, and for alpha use color-mix().
+ */
+.hdp {
+    --hdp-bg: var(--gray-50, #ffffff);
+    --hdp-text: var(--gray-950, #030712);
+    --hdp-muted: var(--gray-500, #6b7280);
+    --hdp-border: var(--gray-200, #e5e7eb);
+    --hdp-primary: var(--primary-600, #4c5fd8);
+    --hdp-primary-soft: color-mix(in srgb, var(--primary-600, #4c5fd8) 12%, transparent);
+    --hdp-today: var(--warning-500, #f59e0b);
+    --hdp-shabbat-bg: color-mix(in srgb, var(--warning-400, #fbbf24) 18%, transparent);
+    --hdp-holiday: var(--primary-600, #4c5fd8);
+    --hdp-cell-bg: var(--gray-100, #f9fafb);
+    --hdp-radius: 0.75rem;     /* fi rounded-xl */
+    --hdp-radius-sm: 0.5rem;   /* fi rounded-lg */
+    --hdp-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --hdp-font: inherit;
+    background: #ffffff;
+}
+
+/* Filament dark mode (the panel toggles .dark on <html>). */
+.dark .hdp,
+.hdp.hdp-dark {
+    --hdp-bg: var(--gray-900, #111827);
+    --hdp-text: var(--gray-100, #f3f4f6);
+    --hdp-muted: var(--gray-400, #9ca3af);
+    --hdp-border: var(--gray-700, #374151);
+    --hdp-cell-bg: var(--gray-800, #1f2937);
+    --hdp-primary: var(--primary-500, #6366f1);
+    --hdp-primary-soft: color-mix(in srgb, var(--primary-400, #818cf8) 22%, transparent);
+    --hdp-shabbat-bg: color-mix(in srgb, var(--warning-400, #fbbf24) 16%, transparent);
+    background: var(--gray-900, #111827);
+}
+
+/* Filament-style chrome for the calendar surface and action bar. */
+.hdp {
+    box-shadow: var(--hdp-shadow);
+}
+.hdp-popup {
+    box-shadow:
+        0 0 0 1px rgb(0 0 0 / 0.05),
+        0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.dark .hdp-popup {
+    box-shadow:
+        0 0 0 1px rgb(255 255 255 / 0.1),
+        0 10px 15px -3px rgb(0 0 0 / 0.4);
+}
+.hdp-actions {
+    background: color-mix(in srgb, var(--gray-500, #6b7280) 8%, transparent);
+}
+.dark .hdp-actions {
+    background: rgb(0 0 0 / 0.2);
+}
+
+/* Primary button = Filament primary button (white text, primary bg). */
+.hdp-btn-primary {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+.hdp-btn-primary:focus-visible,
+.hdp-cell:focus-visible,
+.hdp-tab:focus-visible {
+    outline: 2px solid var(--primary-600, #4c5fd8);
+    outline-offset: 1px;
+}
