@@ -21,7 +21,7 @@ class HebrewDatePicker extends Field
     protected bool | Closure $diaspora = false;
     protected bool | Closure $monthOnly = false;
     protected bool | Closure $yearOnly = false;
-    protected bool | Closure $outsideDays = false;
+    protected bool | Closure $outsideDays = true;
     /** Circular day cells — on by default for the Filament field (config-overridable). */
     protected bool | Closure $rounded = true;
     /** Border around the header nav/pills — off by default (borderless, Filament-native). */

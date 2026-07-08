@@ -28,24 +28,39 @@
                 'fi-hebrew-date-picker-inline rounded-lg ring-1 ring-gray-950/10 dark:ring-white/10 bg-white dark:bg-white/5 p-1 inline-block',
             ])></div>
         @else
-            {{-- Popup, opened from a Filament-styled input. The clear ✕ is a plain
+            {{-- The "other calendar" date of the selection, shown as a hint. --}}
+            <div
+                x-show="hasValue()"
+                x-text="altHint()"
+                x-cloak
+                class="mb-1 text-xs text-gray-500 dark:text-gray-400 text-end"
+            ></div>
+
+            {{-- Popup, opened from a Filament-styled input. Clicking the calendar
+                 icon (or the input) opens the picker. The clear ✕ is a plain
                  borderless overlay (no Filament suffix divider). --}}
             <div class="relative">
                 <x-filament::input.wrapper
                     :disabled="$isDisabled"
                     :valid="! $errors->has($statePath)"
                     prefix-icon="heroicon-m-calendar-days"
+                    x-on:click="open()"
+                    class="cursor-pointer"
                 >
                     <x-filament::input
                         type="text"
-                        readonly
                         x-ref="input"
                         x-model="display"
+                        x-bind:readonly="! editable"
+                        x-on:input="onType($event)"
+                        x-on:keydown.enter.prevent="onEnter()"
+                        inputmode="numeric"
                         :placeholder="$getPlaceholder()"
                         :disabled="$isDisabled"
                         x-on:click="open()"
                         x-on:focus="open()"
-                        class="cursor-pointer pe-8"
+                        class="pe-8"
+                        x-bind:class="editable ? '' : 'cursor-pointer'"
                     />
                 </x-filament::input.wrapper>
 

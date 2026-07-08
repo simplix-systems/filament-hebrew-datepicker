@@ -1,5 +1,7 @@
 # Filament Hebrew Date Picker
 
+<img src="art/hero.svg" alt="Hebrew Date Picker for Filament — dual Hebrew & Gregorian calendar" width="100%" />
+
 A beautiful **Hebrew & Gregorian date picker** field for [Filament](https://filamentphp.com)
 (v4 / v5), built on the [`hebrew-datepicker`](../hebrew-datepicker) package and **styled to
 match Filament** — it uses the panel's primary color, gray scale, rounded corners,
@@ -23,12 +25,20 @@ month-only / year-only mode, and full RTL — inside a native-feeling Filament f
 
 ```bash
 composer require simplix-systems/filament-hebrew-datepicker
-```
-
-```bash
-composer require simplix-systems/filament-hebrew-datepicker
 php artisan filament:assets   # publish the pre-built JS/CSS into public/
 ```
+
+**Tailwind (Filament v4 / custom theme):** so Tailwind doesn't purge the field's
+utility classes, register the package's Blade views as a content source in your
+theme's `app.css`:
+
+```css
+@source '../../../../vendor/simplix-systems/filament-hebrew-datepicker/resources/**/*.blade.php';
+```
+
+Then rebuild your theme (`npm run build`). If you use Filament's default theme
+(no custom `app.css`), you can skip this — `filament:assets` already ships the
+compiled CSS.
 
 That's it — **consumers don't run Node/npm**. The picker (JS + CSS) is shipped
 **pre-built** in `resources/dist/` (committed to the package), and the core

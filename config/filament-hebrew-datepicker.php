@@ -17,6 +17,9 @@ return [
         // false = borderless header (blends into a Filament panel).
         'headerBorder' => false,
 
+        // Show the previous/next month's days in the grid (greyed, still selectable).
+        'outsideDays' => true,
+
         // Highlights — keep the Jewish-calendar richness on by default.
         'holidays' => true,
         'shabbat' => true,
