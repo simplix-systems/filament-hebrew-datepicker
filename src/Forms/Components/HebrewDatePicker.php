@@ -22,9 +22,10 @@ class HebrewDatePicker extends Field
     protected bool | Closure $monthOnly = false;
     protected bool | Closure $yearOnly = false;
     protected bool | Closure $outsideDays = false;
-    protected bool | Closure $rounded = false;
-    /** The clean, Filament-native skin is ON by default for the Filament field. */
-    protected bool | Closure $clean = true;
+    /** Circular day cells — on by default for the Filament field (config-overridable). */
+    protected bool | Closure $rounded = true;
+    /** Border around the header nav/pills — off by default (borderless, Filament-native). */
+    protected bool | Closure $headerBorder = false;
     protected string | Closure | null $lang = null;
     protected string | Closure | null $displayCalendar = null;
     protected bool | Closure $holidays = true;
@@ -35,6 +36,28 @@ class HebrewDatePicker extends Field
     protected bool | Closure $closeOnSelect = true;
     protected bool | Closure $inline = false;
     protected string | Closure | null $primaryColor = null;
+
+    /**
+     * Apply package/config defaults. Values from the published config file
+     * (config/filament-hebrew-datepicker.php) seed the field; any per-field
+     * method call (e.g. ->rounded(false)) still overrides them afterwards.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $d = config('filament-hebrew-datepicker.defaults', []);
+        foreach ([
+            'calendar', 'range', 'time', 'seconds', 'timeFormat', 'timeStyle',
+            'diaspora', 'monthOnly', 'yearOnly', 'outsideDays', 'rounded', 'headerBorder',
+            'lang', 'displayCalendar', 'holidays', 'shabbat', 'parasha', 'compact',
+            'size', 'closeOnSelect', 'inline', 'primaryColor',
+        ] as $key) {
+            if (array_key_exists($key, $d) && property_exists($this, $key)) {
+                $this->{$key} = $d[$key];
+            }
+        }
+    }
 
     /** Which calendar is shown first: 'hebrew' (default) or 'gregorian'. */
     public function calendar(string | Closure $calendar): static
@@ -108,10 +131,10 @@ class HebrewDatePicker extends Field
         return $this;
     }
 
-    /** Use the clean / Filament-native skin (on by default). Pass false for the package's richer default look. */
-    public function clean(bool | Closure $clean = true): static
+    /** Draw a border around the header nav arrows and month/year pills (off by default). */
+    public function headerBorder(bool | Closure $headerBorder = true): static
     {
-        $this->clean = $clean;
+        $this->headerBorder = $headerBorder;
 
         return $this;
     }
@@ -222,9 +245,10 @@ class HebrewDatePicker extends Field
             'diaspora' => $this->evaluate($this->diaspora),
             'outsideDays' => $this->evaluate($this->outsideDays),
             'rounded' => $this->evaluate($this->rounded),
-            'clean' => $this->evaluate($this->clean),
+            'headerBorder' => $this->evaluate($this->headerBorder),
             'lang' => $this->evaluate($this->lang),
             'displayCalendar' => $this->evaluate($this->displayCalendar) ?? $this->evaluate($this->calendar),
+            'labels' => $this->resolveLabels(),
             'highlightHolidays' => $this->evaluate($this->holidays),
             'highlightShabbat' => $this->evaluate($this->shabbat),
             'showParasha' => $this->evaluate($this->parasha),
@@ -239,5 +263,21 @@ class HebrewDatePicker extends Field
     public function isInline(): bool
     {
         return (bool) $this->evaluate($this->inline);
+    }
+
+    /**
+     * Resolve the picker labels for the current language from the (publishable)
+     * translation file. Returns null when no translation array is available, so
+     * the JS picker falls back to its built-in he/en preset.
+     */
+    protected function resolveLabels(): ?array
+    {
+        $lang = $this->evaluate($this->lang)
+            ?? config('filament-hebrew-datepicker.defaults.lang')
+            ?? 'he';
+
+        $labels = trans('filament-hebrew-datepicker::picker.labels', [], $lang);
+
+        return is_array($labels) ? $labels : null;
     }
 }

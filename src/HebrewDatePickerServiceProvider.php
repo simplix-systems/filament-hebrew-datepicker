@@ -16,6 +16,8 @@ class HebrewDatePickerServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
+            ->hasConfigFile()
+            ->hasTranslations()
             ->hasViews();
     }
 

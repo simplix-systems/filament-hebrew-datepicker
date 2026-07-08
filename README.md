@@ -5,13 +5,14 @@ A beautiful **Hebrew & Gregorian date picker** field for [Filament](https://fila
 match Filament** — it uses the panel's primary color, gray scale, rounded corners,
 focus rings and dark mode automatically.
 
-By default the field renders the **clean / Filament-native skin** (borderless cells,
-circular day highlights, grey-scale chrome, primary accent). Call `->clean(false)`
-on the field for the package's richer default look.
+By default the field uses **circular day cells** and a **borderless header** so it
+blends into a Filament panel — while keeping all the highlights (holidays, Shabbat,
+Parashat HaShavua). Change either with `->rounded(false)` / `->headerBorder()`, or
+set project-wide defaults in the published config file (below).
 
 Holidays (religious only), Parashat HaShavua, Rosh Chodesh, Shabbat highlighting,
 range selection, a time picker (native / dropdown / stepper / clock), Diaspora mode,
-month-only mode, and full RTL — inside a native-feeling Filament field.
+month-only / year-only mode, and full RTL — inside a native-feeling Filament field.
 
 ## Requirements
 
@@ -35,6 +36,24 @@ picker is **bundled inside** that JS. Composer never touches npm, so nothing is
 downloaded from the npm registry at install time. `filament:assets` is a
 standard Filament step ([docs](https://filamentphp.com/docs/4.x/advanced/assets))
 that copies the registered assets into `public/`; run it again on deploy.
+
+### Optional: publish the config and translations
+
+```bash
+# Project-wide defaults (calendar, rounded, headerBorder, highlights, lang…)
+php artisan vendor:publish --tag="filament-hebrew-datepicker-config"
+# → config/filament-hebrew-datepicker.php
+
+# Picker labels — edit them, or add a new language
+php artisan vendor:publish --tag="filament-hebrew-datepicker-translations"
+# → lang/vendor/filament-hebrew-datepicker/{he,en}/picker.php
+```
+
+Values in the config file are the defaults for **every** field; anything you set
+per-field (e.g. `->rounded(false)`) still wins for that field. To support a
+language other than `he`/`en`, copy `picker.php` into a new locale folder,
+translate the `labels`, and set that locale on the field with `->lang('xx')` (or
+via the app locale).
 
 ## Building the assets (maintainers only)
 
@@ -120,6 +139,8 @@ HebrewDatePicker::make('date')->inline();
 | `diaspora(bool)` | `false` | 2-day Yom Tov + Diaspora parashot. |
 | `monthOnly(bool)` | `false` | Pick whole months only. |
 | `yearOnly(bool)` | `false` | Pick whole years only (takes precedence over `monthOnly`). |
+| `rounded(bool)` | `true` | Circular day cells. `->rounded(false)` for square cells. |
+| `headerBorder(bool)` | `false` | Border around the header nav/pills. `->headerBorder()` to frame them. |
 | `displayCalendar(string)` | calendar | Calendar shown in the field after selection. |
 | `holidays(bool)` | `true` | Highlight religious holidays. |
 | `shabbat(bool)` | `true` | Highlight Saturdays. |
