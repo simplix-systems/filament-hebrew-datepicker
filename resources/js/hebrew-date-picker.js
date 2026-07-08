@@ -71,6 +71,10 @@ export default function hebrewDatePicker({ state, config, isDisabled }) {
             const d = parseISO(String(iso).split('T')[0])
             if (!d) return ''
             const precision = config.precision || 'day'
+            // When a time picker is on, append the time part (HH:mm[:ss]).
+            const tPart = config.time && String(iso).includes('T')
+                ? ' ' + String(iso).split('T')[1].slice(0, config.seconds ? 8 : 5)
+                : ''
             if (precision === 'year') {
                 return cal() === 'hebrew' ? hebYearGematriaFull(gregToHebParts(d).year) : String(d.getFullYear())
             }
@@ -79,8 +83,8 @@ export default function hebrewDatePicker({ state, config, isDisabled }) {
                     ? hebMonthYearLabel(d)
                     : d.toLocaleDateString(undefined, { month: '2-digit', year: 'numeric' })
             }
-            if (cal() === 'hebrew') return hebFullString(d)
-            return d.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' })
+            if (cal() === 'hebrew') return hebFullString(d) + tPart
+            return d.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' }) + tPart
         },
 
         // The "other" calendar's date for the selected value — shown as a hint by

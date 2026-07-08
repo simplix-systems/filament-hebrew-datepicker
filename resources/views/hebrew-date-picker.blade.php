@@ -7,39 +7,32 @@
     $isDisabled = $isDisabled();
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
+{{-- x-data wraps the whole field wrapper so the native Filament hint (rendered
+     after the label) is inside this Alpine component's scope. --}}
+<div
+    x-load
+    x-load-src="{{ FilamentAsset::getAlpineComponentSrc('hebrew-date-picker', 'simplix-systems/filament-hebrew-datepicker') }}"
+    x-data="hebrewDatePicker({
+        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+        config: @js($config),
+        isDisabled: @js($isDisabled),
+    })"
+    class="fi-hebrew-date-picker"
 >
-    <div
-        wire:ignore
-        x-load
-        x-load-src="{{ FilamentAsset::getAlpineComponentSrc('hebrew-date-picker', 'simplix-systems/filament-hebrew-datepicker') }}"
-        x-data="hebrewDatePicker({
-            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
-            config: @js($config),
-            isDisabled: @js($isDisabled),
-        })"
-        class="fi-hebrew-date-picker"
+    <x-dynamic-component
+        :component="$getFieldWrapperView()"
+        :field="$field"
     >
         @if ($isInline)
             {{-- Inline calendar --}}
-            <div x-ref="host" @class([
+            <div wire:ignore x-ref="host" @class([
                 'fi-hebrew-date-picker-inline rounded-lg ring-1 ring-gray-950/10 dark:ring-white/10 bg-white dark:bg-white/5 p-1 inline-block',
             ])></div>
         @else
-            {{-- The "other calendar" date of the selection, shown as a hint. --}}
-            <div
-                x-show="hasValue()"
-                x-text="altHint()"
-                x-cloak
-                class="mb-1 text-xs text-gray-500 dark:text-gray-400 text-end"
-            ></div>
-
             {{-- Popup, opened from a Filament-styled input. Clicking the calendar
                  icon (or the input) opens the picker. The clear ✕ is a plain
                  borderless overlay (no Filament suffix divider). --}}
-            <div class="relative">
+            <div wire:ignore class="relative">
                 <x-filament::input.wrapper
                     :disabled="$isDisabled"
                     :valid="! $errors->has($statePath)"
@@ -76,5 +69,5 @@
                 </button>
             </div>
         @endif
-    </div>
-</x-dynamic-component>
+    </x-dynamic-component>
+</div>

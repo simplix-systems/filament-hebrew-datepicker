@@ -5,6 +5,7 @@ namespace SimplixSystems\HebrewDatePicker\Forms\Components;
 use Closure;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Forms\Components\Field;
+use Illuminate\Support\HtmlString;
 
 class HebrewDatePicker extends Field
 {
@@ -57,6 +58,13 @@ class HebrewDatePicker extends Field
                 $this->{$key} = $d[$key];
             }
         }
+
+        // Native Filament hint (rendered after the label) showing the OTHER
+        // calendar's date for the selection. Computed client-side by the Alpine
+        // component (altHint), so it lives in that component's scope.
+        $this->hint(new HtmlString(
+            '<span x-show="hasValue()" x-text="altHint()" x-cloak class="tabular-nums"></span>'
+        ));
     }
 
     /** Which calendar is shown first: 'hebrew' (default) or 'gregorian'. */
