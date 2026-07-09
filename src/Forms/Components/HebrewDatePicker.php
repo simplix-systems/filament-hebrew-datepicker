@@ -35,8 +35,11 @@ class HebrewDatePicker extends Field
     protected bool | Closure $compact = false;
     protected string | Closure $size = 'md';
     protected bool | Closure $closeOnSelect = true;
+    protected bool | Closure $openOnInputClick = true;
     protected bool | Closure $inline = false;
     protected string | Closure | null $primaryColor = null;
+    protected string | Closure | null $minDate = null;
+    protected string | Closure | null $maxDate = null;
 
     /**
      * Apply package/config defaults. Values from the published config file
@@ -52,7 +55,8 @@ class HebrewDatePicker extends Field
             'calendar', 'range', 'time', 'seconds', 'timeFormat', 'timeStyle',
             'diaspora', 'monthOnly', 'yearOnly', 'outsideDays', 'rounded', 'headerBorder',
             'lang', 'displayCalendar', 'holidays', 'shabbat', 'parasha', 'compact',
-            'size', 'closeOnSelect', 'inline', 'primaryColor',
+            'size', 'closeOnSelect', 'openOnInputClick', 'inline', 'primaryColor',
+            'minDate', 'maxDate',
         ] as $key) {
             if (array_key_exists($key, $d) && property_exists($this, $key)) {
                 $this->{$key} = $d[$key];
@@ -223,6 +227,30 @@ class HebrewDatePicker extends Field
         return $this;
     }
 
+    /** Whether clicking the input opens the picker (Gregorian display only; Hebrew always opens). Off = open via the calendar icon. */
+    public function openOnInputClick(bool | Closure $openOnInputClick = true): static
+    {
+        $this->openOnInputClick = $openOnInputClick;
+
+        return $this;
+    }
+
+    /** Earliest selectable date, ISO "YYYY-MM-DD". */
+    public function minDate(string | Closure | null $minDate): static
+    {
+        $this->minDate = $minDate;
+
+        return $this;
+    }
+
+    /** Latest selectable date, ISO "YYYY-MM-DD". */
+    public function maxDate(string | Closure | null $maxDate): static
+    {
+        $this->maxDate = $maxDate;
+
+        return $this;
+    }
+
     /** Render the calendar inline instead of in a popup. */
     public function inline(bool | Closure $inline = true): static
     {
@@ -263,8 +291,11 @@ class HebrewDatePicker extends Field
             'compact' => $this->evaluate($this->compact),
             'size' => $this->evaluate($this->size),
             'closeOnSelect' => $this->evaluate($this->closeOnSelect),
+            'openOnInputClick' => $this->evaluate($this->openOnInputClick),
             'inline' => $this->evaluate($this->inline),
             'primaryColor' => $this->evaluate($this->primaryColor),
+            'min' => $this->evaluate($this->minDate),
+            'max' => $this->evaluate($this->maxDate),
         ], fn ($value) => $value !== null);
     }
 

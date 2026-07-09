@@ -27,6 +27,15 @@ function parseTyped(text) {
     if (d.getDate() !== +m[1] || d.getMonth() !== +m[2] - 1) return ''
     return toISO(d)
 }
+// Flexible Gregorian parse for PASTED text: DD/MM/YYYY, D.M.YYYY, YYYY-MM-DD…
+function parseGregFlexible(text) {
+    text = String(text).trim()
+    let m = text.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/)
+    if (m) { const d = new Date(+m[3], +m[2] - 1, +m[1]); if (d.getDate() === +m[1] && d.getMonth() === +m[2] - 1) return toISO(d) }
+    m = text.match(/^(\d{4})[\/.\-](\d{1,2})[\/.\-](\d{1,2})$/)
+    if (m) { const d = new Date(+m[1], +m[2] - 1, +m[3]); if (d.getMonth() === +m[2] - 1 && d.getDate() === +m[3]) return toISO(d) }
+    return ''
+}
 
 /**
  * Filament Alpine component for the Hebrew date picker.
@@ -134,6 +143,12 @@ export default function hebrewDatePicker({ state, config, isDisabled }) {
             const iso = parseTyped(maskDate(this.display))
             if (iso) { this.state = iso; this.render(); this.picker?.close() }
         },
+        // Non-editable inputs are not `readonly` (so paste fires) — block typed
+        // characters instead, while allowing navigation / shortcuts.
+        onKeydown(e) {
+            if (this.editable || e.ctrlKey || e.metaKey || e.key.length !== 1) return
+            e.preventDefault()
+        },
 
         commit(r) {
             this.state = 'iso' in r ? r.iso : { start: r.start, end: r.end }
@@ -165,6 +180,27 @@ export default function hebrewDatePicker({ state, config, isDisabled }) {
             }).open(this.$refs.input)
             this.isOpen = true
             requestAnimationFrame(() => this.applyDarkTheme(document.querySelector('.hdp-popup')))
+        },
+
+        // Clicking the input opens the picker only for a Gregorian display when
+        // openOnInputClick isn't disabled; Hebrew always opens. (The calendar
+        // icon always opens — see the blade.)
+        openByInputClick() {
+            return cal() !== 'gregorian' || config.openOnInputClick !== false
+        },
+        openFromInput() {
+            if (this.openByInputClick()) this.open()
+        },
+        // Pasting a Gregorian date works in ANY display: parse and set the state.
+        onPaste(e) {
+            const txt = (e.clipboardData || window.clipboardData)?.getData('text') || ''
+            const iso = parseGregFlexible(txt)
+            if (iso) {
+                e.preventDefault()
+                this.state = iso
+                this.render()
+                if (this.picker) this.picker.setValue(iso)
+            }
         },
 
         clear() {

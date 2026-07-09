@@ -36,22 +36,27 @@
                 <x-filament::input.wrapper
                     :disabled="$isDisabled"
                     :valid="! $errors->has($statePath)"
-                    prefix-icon="heroicon-m-calendar-days"
-                    x-on:click="open()"
-                    class="cursor-pointer"
                 >
+                    {{-- Clickable calendar icon — always opens the picker. --}}
+                    <x-slot name="prefix">
+                        <button type="button" x-on:click.stop="open()" class="flex items-center cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                            <x-filament::icon icon="heroicon-m-calendar-days" class="h-5 w-5" />
+                        </button>
+                    </x-slot>
+
                     <x-filament::input
                         type="text"
                         x-ref="input"
                         x-model="display"
-                        x-bind:readonly="! editable"
                         x-on:input="onType($event)"
+                        x-on:keydown="onKeydown($event)"
                         x-on:keydown.enter.prevent="onEnter()"
+                        x-on:paste="onPaste($event)"
                         inputmode="numeric"
                         :placeholder="$getPlaceholder()"
                         :disabled="$isDisabled"
-                        x-on:click="open()"
-                        x-on:focus="open()"
+                        x-on:click="openFromInput()"
+                        x-on:focus="openFromInput()"
                         class="pe-8"
                         x-bind:class="editable ? '' : 'cursor-pointer'"
                     />
