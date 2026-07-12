@@ -1,11 +1,27 @@
+<div align="center">
+
 # Filament Hebrew Date Picker
 
 <img src="art/hero.svg" alt="Hebrew Date Picker for Filament — dual Hebrew & Gregorian calendar" width="100%" />
 
-A beautiful **Hebrew & Gregorian date picker** field for [Filament](https://filamentphp.com)
-(v4 / v5), built on the [`hebrew-datepicker`](../hebrew-datepicker) package and **styled to
-match Filament** — it uses the panel's primary color, gray scale, rounded corners,
-focus rings and dark mode automatically.
+**A beautiful Hebrew & Gregorian date picker field for Filament.**
+
+Holidays · Parashat HaShavua · Range · Time · Month/Year · Dark mode · RTL
+
+<p>
+  <a href="https://packagist.org/packages/simplix-systems/filament-hebrew-datepicker"><img alt="Packagist version" src="https://img.shields.io/packagist/v/simplix-systems/filament-hebrew-datepicker?color=4c5fd8&labelColor=1b2130&logo=packagist&logoColor=white"></a>
+  <a href="https://packagist.org/packages/simplix-systems/filament-hebrew-datepicker"><img alt="downloads" src="https://img.shields.io/packagist/dt/simplix-systems/filament-hebrew-datepicker?color=4c5fd8&labelColor=1b2130"></a>
+  <img alt="PHP 8.2+" src="https://img.shields.io/packagist/dependency-v/simplix-systems/filament-hebrew-datepicker/php?color=4c5fd8&labelColor=1b2130&label=php">
+  <img alt="Filament v4 / v5" src="https://img.shields.io/badge/filament-v4%20%7C%20v5-4c5fd8?labelColor=1b2130">
+  <a href="./LICENSE.md"><img alt="MIT license" src="https://img.shields.io/packagist/l/simplix-systems/filament-hebrew-datepicker?color=4c5fd8&labelColor=1b2130"></a>
+</p>
+
+</div>
+
+A **Hebrew & Gregorian date picker** field for [Filament](https://filamentphp.com)
+(v4 / v5), built on the [`@simplix-systems/hebrew-date-picker`](https://www.npmjs.com/package/@simplix-systems/hebrew-date-picker)
+core and **styled to match Filament** — it uses the panel's primary color, gray
+scale, rounded corners, focus rings and dark mode automatically.
 
 By default the field uses **circular day cells** and a **borderless header** so it
 blends into a Filament panel — while keeping all the highlights (holidays, Shabbat,
