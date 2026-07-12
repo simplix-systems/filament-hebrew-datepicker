@@ -65,37 +65,36 @@ language other than `he`/`en`, copy `picker.php` into a new locale folder,
 translate the `labels`, and set that locale on the field with `->lang('xx')` (or
 via the app locale).
 
-## Building the assets (maintainers only)
+## Maintaining (source of truth = the core npm package)
 
-You only rebuild `resources/dist/` when you change the picker. The build bundles
-the core from the first source it finds:
+You maintain **only** the core package
+([`@simplix-systems/hebrew-date-picker`](https://www.npmjs.com/package/@simplix-systems/hebrew-date-picker)).
+This plugin **bundles** a built copy of that core into `resources/dist/` — it
+pulls the core **from npm**, so the two repos don't need to live on the same
+machine.
 
-1. **`node_modules/hebrew-datepicker`** — the published npm package (once you
-   publish the core; add it as a `devDependency` and `npm install`).
-2. **`../hebrew-datepicker/src`** — the sibling source, for local monorepo dev.
-3. **`resources/picker/`** — the vendored built copy, as a last resort.
+**Releasing a new version is a button click** — no local build:
+
+> GitHub → **Actions** → **"Sync core from npm & release"** → **Run workflow**
+> (optionally pin a `core_version` and pick the bump). It installs the core from
+> npm, rebuilds `resources/dist/`, commits, tags `vX.Y.Z` and pushes — Packagist
+> then picks it up via the webhook.
+
+It also runs on a **daily schedule**, auto-releasing whenever a newer core is on
+npm, and can be triggered instantly by the core's publish workflow (set a
+`FILAMENT_SYNC_TOKEN` PAT secret on the core repo — optional).
+
+To rebuild locally instead (`build.mjs` resolves the core from
+`node_modules/@simplix-systems/hebrew-date-picker` first, then a sibling
+`../hebrew-datepicker/src`, then the vendored copy):
 
 ```bash
-npm install        # esbuild (+ the core, if you added it as a dep)
-npm run build      # → resources/dist/hebrew-date-picker.{js,css}
+npm install        # esbuild + the core from npm
+npm run build      # → resources/dist/hebrew-date-picker.{js,css}  (prints "· core from: …")
 ```
 
-The `npm run build` output prints which source it used (`· core from: …`).
-Commit the regenerated `resources/dist/` so the package stays self-contained.
-
-### Publishing to Packagist / the Filament plugins directory
-
-The plugin is a **Composer** package. To release it:
-
-1. Build the assets (above) and **commit `resources/dist/`**.
-2. Tag a version and push; register the repo on
-   [Packagist](https://packagist.org) (and list it on the
-   [Filament plugins](https://filamentphp.com/plugins) site).
-3. Users install with `composer require …` + `php artisan filament:assets`.
-
-The core `hebrew-datepicker` is **not** required by consumers. Publishing it to
-npm is optional — it only makes *your* rebuilds reproducible without the sibling
-folder (resolution step 1 above).
+Consumers never touch npm — the built assets are committed and shipped in the
+Composer package.
 
 ## Usage
 

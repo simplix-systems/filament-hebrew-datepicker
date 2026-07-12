@@ -1,0 +1,106 @@
+name: Sync core from npm & release
+
+# Pulls @simplix-systems/hebrew-date-picker from npm (the cloud — NOT a sibling
+# folder), rebuilds the bundled resources/dist, and commits + tags a new release
+# so Packagist picks it up. You maintain only the core package; this keeps the
+# Filament plugin in sync without both repos living on the same machine.
+#
+# Run it three ways:
+#   • Manually: Actions → "Sync core from npm & release" → Run workflow
+#     (optionally pin a core version and choose the version bump).
+#   • Automatically: the daily schedule below rebuilds + releases whenever a
+#     newer core has been published to npm.
+#   • Chained: the core repo can trigger it via repository_dispatch (optional).
+
+on:
+  workflow_dispatch:
+    inputs:
+      core_version:
+        description: 'Core version to bundle (npm dist-tag or exact version)'
+        default: 'latest'
+      release:
+        description: 'Plugin version bump'
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+  schedule:
+    - cron: '0 6 * * *'   # daily; releases only if a newer core exists
+  repository_dispatch:
+    types: [core-published]
+
+concurrency:
+  group: sync-core
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Resolve target core version
+        id: core
+        run: |
+          TARGET='${{ github.event.inputs.core_version }}'
+          [ -z "$TARGET" ] && TARGET='latest'
+          VER=$(npm view "@simplix-systems/hebrew-date-picker@$TARGET" version)
+          CURRENT=$(cat core-version.txt 2>/dev/null || echo 'none')
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          # On the schedule, only proceed when npm has something newer.
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$VER" = "$CURRENT" ]; then
+            echo "proceed=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "proceed=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install deps + core from npm
+        if: steps.core.outputs.proceed == 'yes'
+        run: |
+          npm install
+          npm install --no-save "@simplix-systems/hebrew-date-picker@${{ steps.core.outputs.version }}"
+
+      - name: Build bundled assets from the npm core
+        if: steps.core.outputs.proceed == 'yes'
+        run: |
+          npm run build
+          echo "${{ steps.core.outputs.version }}" > core-version.txt
+
+      - name: Commit, tag and push a release
+        if: steps.core.outputs.proceed == 'yes'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add resources/dist core-version.txt
+          if git diff --cached --quiet; then
+            echo "No asset changes; nothing to release." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          # Next tag = latest vX.Y.Z bumped by the chosen type (default patch).
+          LATEST=$(git tag -l 'v*' --sort=-v:refname | head -1)
+          LATEST=${LATEST:-v0.0.0}
+          V=${LATEST#v}; MA=${V%%.*}; REST=${V#*.}; MI=${REST%%.*}; PA=${REST#*.}
+          case "${{ github.event.inputs.release || 'patch' }}" in
+            major) MA=$((MA+1)); MI=0; PA=0;;
+            minor) MI=$((MI+1)); PA=0;;
+            *)     PA=$((PA+1));;
+          esac
+          # If there are no tags yet, start at v1.0.0.
+          [ "$LATEST" = "v0.0.0" ] && NEW="v1.0.0" || NEW="v$MA.$MI.$PA"
+          git commit -m "release $NEW — bundle core ${{ steps.core.outputs.version }}"
+          git tag "$NEW"
+          git push origin HEAD --follow-tags
+          echo "✅ Released $NEW bundling core ${{ steps.core.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Nothing to do
+        if: steps.core.outputs.proceed == 'no'
+        run: echo "ℹ️ Core ${{ steps.core.outputs.version }} already bundled — no release." >> "$GITHUB_STEP_SUMMARY"
