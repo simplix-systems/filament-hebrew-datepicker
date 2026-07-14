@@ -40,6 +40,8 @@ class HebrewDatePicker extends Field
     protected string | Closure | null $primaryColor = null;
     protected string | Closure | null $minDate = null;
     protected string | Closure | null $maxDate = null;
+    /** Show the other-calendar date as a hint after the label. Off by default. */
+    protected bool | Closure $showDateHint = false;
 
     /**
      * Apply package/config defaults. Values from the published config file
@@ -56,7 +58,7 @@ class HebrewDatePicker extends Field
             'diaspora', 'monthOnly', 'yearOnly', 'outsideDays', 'rounded', 'headerBorder',
             'lang', 'displayCalendar', 'holidays', 'shabbat', 'parasha', 'compact',
             'size', 'closeOnSelect', 'openOnInputClick', 'inline', 'primaryColor',
-            'minDate', 'maxDate',
+            'minDate', 'maxDate', 'showDateHint',
         ] as $key) {
             if (array_key_exists($key, $d) && property_exists($this, $key)) {
                 $this->{$key} = $d[$key];
@@ -64,11 +66,13 @@ class HebrewDatePicker extends Field
         }
 
         // Native Filament hint (rendered after the label) showing the OTHER
-        // calendar's date for the selection. Computed client-side by the Alpine
-        // component (altHint), so it lives in that component's scope.
-        $this->hint(new HtmlString(
-            '<span x-show="hasValue()" x-text="altHint()" x-cloak class="tabular-nums"></span>'
-        ));
+        // calendar's date for the selection — off by default. Computed client-side
+        // by the Alpine component (altHint), so it lives in that component's scope.
+        if ($this->evaluate($this->showDateHint)) {
+            $this->hint(new HtmlString(
+                '<span x-show="hasValue()" x-text="altHint()" x-cloak class="tabular-nums"></span>'
+            ));
+        }
     }
 
     /** Which calendar is shown first: 'hebrew' (default) or 'gregorian'. */
@@ -231,6 +235,14 @@ class HebrewDatePicker extends Field
     public function openOnInputClick(bool | Closure $openOnInputClick = true): static
     {
         $this->openOnInputClick = $openOnInputClick;
+
+        return $this;
+    }
+
+    /** Show the other-calendar date as a hint after the label (off by default). */
+    public function showDateHint(bool | Closure $showDateHint = true): static
+    {
+        $this->showDateHint = $showDateHint;
 
         return $this;
     }
