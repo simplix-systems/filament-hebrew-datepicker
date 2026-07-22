@@ -2514,26 +2514,18 @@ function hebSameDayLastYear() {
   const m = hebMonthInYear(p.year - 1, p.month);
   return hebToGreg(p.year - 1, m.num, p.day) || t;
 }
-function hebSameDayLastMonth() {
-  const t = startOfToday();
-  const p = gregToHebParts(t);
-  let year = p.year;
-  let ms = getMonthsForYear(year);
-  let idx = ms.findIndex((m) => m.num === p.month);
-  if (idx < 0) idx = 0;
-  idx -= 1;
-  if (idx < 0) {
-    if (year - 1 < 1) return t;
-    year -= 1;
-    ms = getMonthsForYear(year);
-    idx = ms.length - 1;
-  }
-  return hebToGreg(year, ms[idx].num, p.day) || t;
+function hebThisMonthSpan() {
+  const p = gregToHebParts(startOfToday());
+  const m = hebMonthInYear(p.year, p.month);
+  const first = hebToGreg(p.year, m.num, 1) || startOfToday();
+  return { start: toISO(first), end: toISO(shiftDays(first, m.days - 1)) };
 }
-function gregSameDayLastMonth() {
+function gregThisMonthSpan() {
   const t = startOfToday();
-  const lastD = new Date(t.getFullYear(), t.getMonth(), 0).getDate();
-  return new Date(t.getFullYear(), t.getMonth() - 1, Math.min(t.getDate(), lastD));
+  return {
+    start: toISO(new Date(t.getFullYear(), t.getMonth(), 1)),
+    end: toISO(new Date(t.getFullYear(), t.getMonth() + 1, 0))
+  };
 }
 function gregSameDayLastYear() {
   const t = startOfToday();
@@ -2592,7 +2584,7 @@ function builtinPresets(L) {
     } },
     { label: L.presetLast7Days, range: () => rolling(shiftDays(startOfToday(), -6)) },
     { label: L.presetLast30Days, range: () => rolling(shiftDays(startOfToday(), -29)) },
-    { label: L.presetThisMonth, range: (cal) => rolling(cal === "hebrew" ? hebSameDayLastMonth() : gregSameDayLastMonth()) },
+    { label: L.presetThisMonth, range: (cal) => cal === "hebrew" ? hebThisMonthSpan() : gregThisMonthSpan() },
     { label: L.presetLastMonth, range: (cal) => cal === "hebrew" ? hebLastMonthSpan() : gregLastMonthSpan() },
     { label: L.presetThisYear, range: (cal) => rolling(cal === "hebrew" ? hebSameDayLastYear() : gregSameDayLastYear()) },
     { label: L.presetLastYear, range: (cal) => cal === "hebrew" ? hebLastYearSpan() : gregLastYearSpan() }
