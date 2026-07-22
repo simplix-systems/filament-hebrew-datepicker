@@ -39,8 +39,7 @@ return [
         // --- behaviour ---
         'closeOnSelect' => true,       // close the popup on pick                [true]
         'presets' => false,            // range mode: quick-range sidebar        [false]
-        'openOnInputClick' => true,    // clicking the input opens (Gregorian);
-                                       // false = open only via the icon        [true]
+        'openOnInputClick' => true,    // input click opens (Gregorian); false = icon only [true]
         'showDateHint' => false,       // show the other-calendar date by label  [false]
 
         // --- limits (ISO "YYYY-MM-DD" or null) ---

@@ -14,34 +14,60 @@ class HebrewDatePicker extends Field
     protected string $view = 'filament-hebrew-datepicker::hebrew-date-picker';
 
     protected string | Closure $calendar = 'hebrew';
+
     protected bool | Closure $range = false;
+
     protected bool | Closure $time = false;
+
     protected bool | Closure $seconds = false;
+
     protected string | Closure $timeFormat = '24';
+
     protected string | Closure $timeStyle = 'native';
+
     protected bool | Closure $diaspora = false;
+
     protected bool | Closure $monthOnly = false;
+
     protected bool | Closure $yearOnly = false;
+
     protected bool | Closure $outsideDays = true;
+
     /** Circular day cells — on by default for the Filament field (config-overridable). */
     protected bool | Closure $rounded = true;
+
     /** Border around the header nav/pills — off by default (borderless, Filament-native). */
     protected bool | Closure $headerBorder = false;
+
     protected string | Closure | null $lang = null;
+
     protected string | Closure | null $displayCalendar = null;
+
     protected bool | Closure $holidays = true;
+
     protected bool | Closure $shabbat = true;
+
     protected bool | Closure $parasha = true;
+
     protected bool | Closure $compact = false;
+
     protected string | Closure $size = 'md';
+
     protected bool | Closure $closeOnSelect = true;
+
     /** Range mode: quick-range presets sidebar (today / last 7 days / this Hebrew year…). */
     protected bool | Closure $presets = false;
+
     protected bool | Closure $openOnInputClick = true;
+
     protected bool | Closure $inline = false;
+
     protected string | Closure | null $primaryColor = null;
+
     protected string | Closure | null $minDate = null;
+
     protected string | Closure | null $maxDate = null;
+
     /** Show the other-calendar date as a hint after the label. Off by default. */
     protected bool | Closure $showDateHint = false;
 
