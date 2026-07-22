@@ -35,6 +35,8 @@ class HebrewDatePicker extends Field
     protected bool | Closure $compact = false;
     protected string | Closure $size = 'md';
     protected bool | Closure $closeOnSelect = true;
+    /** Range mode: quick-range presets sidebar (today / last 7 days / this Hebrew year…). */
+    protected bool | Closure $presets = false;
     protected bool | Closure $openOnInputClick = true;
     protected bool | Closure $inline = false;
     protected string | Closure | null $primaryColor = null;
@@ -57,7 +59,7 @@ class HebrewDatePicker extends Field
             'calendar', 'range', 'time', 'seconds', 'timeFormat', 'timeStyle',
             'diaspora', 'monthOnly', 'yearOnly', 'outsideDays', 'rounded', 'headerBorder',
             'lang', 'displayCalendar', 'holidays', 'shabbat', 'parasha', 'compact',
-            'size', 'closeOnSelect', 'openOnInputClick', 'inline', 'primaryColor',
+            'size', 'closeOnSelect', 'presets', 'openOnInputClick', 'inline', 'primaryColor',
             'minDate', 'maxDate', 'showDateHint',
         ] as $key) {
             if (array_key_exists($key, $d) && property_exists($this, $key)) {
@@ -231,6 +233,14 @@ class HebrewDatePicker extends Field
         return $this;
     }
 
+    /** Range mode: show the quick-range presets sidebar (today, last 7 days, this Hebrew/civil year…). */
+    public function presets(bool | Closure $presets = true): static
+    {
+        $this->presets = $presets;
+
+        return $this;
+    }
+
     /** Whether clicking the input opens the picker (Gregorian display only; Hebrew always opens). Off = open via the calendar icon. */
     public function openOnInputClick(bool | Closure $openOnInputClick = true): static
     {
@@ -303,6 +313,7 @@ class HebrewDatePicker extends Field
             'compact' => $this->evaluate($this->compact),
             'size' => $this->evaluate($this->size),
             'closeOnSelect' => $this->evaluate($this->closeOnSelect),
+            'presets' => $this->evaluate($this->presets),
             'openOnInputClick' => $this->evaluate($this->openOnInputClick),
             'inline' => $this->evaluate($this->inline),
             'primaryColor' => $this->evaluate($this->primaryColor),

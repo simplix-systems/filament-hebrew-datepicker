@@ -173,6 +173,7 @@ HebrewDatePicker::make('date')->inline();
 | `compact(bool)` | `false` | Minimal layout. |
 | `size(string)` | `'md'` | `sm` / `md` / `lg`. |
 | `closeOnSelect(bool)` | `true` | Close the popup on pick. |
+| `presets(bool)` | `false` | Range mode: quick-range sidebar (today, last 7/30 days, this/last month & year — Hebrew-calendar-aware on the Hebrew tab). |
 | `inline(bool)` | `false` | Render inline instead of a popup. |
 | `primaryColor(string)` | Filament primary | Override the accent color. |
 

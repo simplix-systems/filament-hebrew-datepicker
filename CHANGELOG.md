@@ -5,6 +5,10 @@ All notable changes to `simplix-systems/filament-hebrew-datepicker` will be docu
 ## Unreleased
 
 ### Added
+- `presets()` — range mode: quick-range sidebar (today, yesterday, last 7/30
+  days, this/last month & year — Hebrew-calendar-aware on the Hebrew tab).
+  Configurable via the published config (`defaults.presets`) and translatable
+  labels (`preset*` keys in the picker translations).
 - `yearOnly()` — pick whole years only (mirrors `monthOnly()`), backed by the core `precision: 'year'`.
 - Precision-aware field display: year-only shows just the year, month-only shows month + year.
 - Dark mode follows Filament's theme automatically.
