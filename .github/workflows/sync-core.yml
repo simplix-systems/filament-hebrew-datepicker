@@ -85,20 +85,24 @@ jobs:
             echo "No asset changes; nothing to release." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          # Next tag = latest vX.Y.Z bumped by the chosen type (default patch).
-          LATEST=$(git tag -l 'v*' --sort=-v:refname | head -1)
-          LATEST=${LATEST:-v0.0.0}
+          # Next tag = latest X.Y.Z bumped by the chosen type (default patch).
+          # Tags are UNPREFIXED semver (1.0.2), matching the existing releases and
+          # Packagist. Accept an optional leading "v" when scanning, for safety.
+          LATEST=$(git tag -l --sort=-v:refname | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+          LATEST=${LATEST:-0.0.0}
           V=${LATEST#v}; MA=${V%%.*}; REST=${V#*.}; MI=${REST%%.*}; PA=${REST#*.}
           case "${{ github.event.inputs.release || 'patch' }}" in
             major) MA=$((MA+1)); MI=0; PA=0;;
             minor) MI=$((MI+1)); PA=0;;
             *)     PA=$((PA+1));;
           esac
-          # If there are no tags yet, start at v1.0.0.
-          [ "$LATEST" = "v0.0.0" ] && NEW="v1.0.0" || NEW="v$MA.$MI.$PA"
+          NEW="$MA.$MI.$PA"
           git commit -m "release $NEW — bundle core ${{ steps.core.outputs.version }}"
-          git tag "$NEW"
-          git push origin HEAD --follow-tags
+          # Annotated tag, pushed EXPLICITLY (a lightweight tag would be skipped by
+          # --follow-tags and never reach the remote / Packagist).
+          git tag -a "$NEW" -m "release $NEW — bundle core ${{ steps.core.outputs.version }}"
+          git push origin HEAD
+          git push origin "refs/tags/$NEW"
           echo "✅ Released $NEW bundling core ${{ steps.core.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Nothing to do

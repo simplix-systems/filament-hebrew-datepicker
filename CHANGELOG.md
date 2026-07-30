@@ -4,7 +4,17 @@ All notable changes to `simplix-systems/filament-hebrew-datepicker` will be docu
 
 ## Unreleased
 
+### Fixed
+- **Release workflow tagging.** The `sync-core` release step scanned for
+  `v`-prefixed tags (none exist — releases are unprefixed like `1.0.2`), so it
+  recomputed `v1.0.0` every run, and created a lightweight tag that
+  `--follow-tags` never pushed. It now bumps the real latest tag and pushes an
+  annotated tag explicitly, so Packagist actually sees each release.
+
 ### Added
+- Bundled core brings the **precision-aware picker preview** — month/year
+  pickers show only the month + year / the year (no day) in the equivalent-date
+  line.
 - `presets()` — range mode: quick-range sidebar (today, yesterday, last 7/30
   days, this/last month & year — Hebrew-calendar-aware on the Hebrew tab).
   Configurable via the published config (`defaults.presets`) and translatable
